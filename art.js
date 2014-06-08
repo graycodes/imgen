@@ -5,10 +5,20 @@ window.art = (function($) {
         art.cellSize = 20;
         art.width = 800;
         art.height = 600;
+        art.colours = {
+            primary:   [200, 60, 0],
+            secondary: [60, 140, 170],
+            tertiary:  [220, 170, 30]
+        };
+        art.same = 0;
+        art.pri = 0;
+        art.sec = 0;
+        art.ter = 0;
 
         art.createCanvas();
         art.drawGridDots();
         art.drawTriangles();
+        console.log (art.same, art.pri, art.sec, art.ter);
     };
 
     art.createCanvas = function() {
@@ -64,53 +74,81 @@ window.art = (function($) {
     };
     
     art.drawTriL1 = function(x, y) {
-        art.drawTriangle(art.drawTriangleLeft1, x, y);
+        art.drawTriangle(art.triangleLeft1, x, y);
     };
     
     art.drawTriL2 = function(x, y) {
-        art.drawTriangle(art.drawTriangleLeft2, x, y);
+        art.drawTriangle(art.triangleLeft2, x, y);
     };
     
     art.drawTriR1 = function(x, y) {
-        art.drawTriangle(art.drawTriangleRight1, x, y);
+        art.drawTriangle(art.triangleRight1, x, y);
     };
     
     art.drawTriR2 = function(x, y) {
-        art.drawTriangle(art.drawTriangleRight2, x, y);
+        art.drawTriangle(art.triangleRight2, x, y);
     };
 
     // <|
-    art.drawTriangleLeft1 = function(x, y) {
+    art.triangleLeft1 = function(x, y) {
         art.ctx.moveTo(x, y);
         art.ctx.lineTo(x + (art.cellSize * 2), y - art.cellSize);
         art.ctx.lineTo(x + (art.cellSize * 2), y + art.cellSize);
     };
 
     //   <|
-    art.drawTriangleLeft2 = function(x, y) {
+    art.triangleLeft2 = function(x, y) {
         art.ctx.moveTo(x + (art.cellSize * 2), y);
         art.ctx.lineTo(x + (art.cellSize * 4), y - art.cellSize);
         art.ctx.lineTo(x + (art.cellSize * 4), y + art.cellSize);
     };
 
     // |>
-    art.drawTriangleRight1 = function(x, y) {
+    art.triangleRight1 = function(x, y) {
         art.ctx.moveTo(x, y - art.cellSize);
         art.ctx.lineTo(x + (art.cellSize * 2), y);
         art.ctx.lineTo(x, y + art.cellSize);
     };
 
     //   |>
-    art.drawTriangleRight2 = function(x, y) {
+    art.triangleRight2 = function(x, y) {
         art.ctx.moveTo(x + (art.cellSize * 2), y - art.cellSize);
         art.ctx.lineTo(x + (art.cellSize * 4), y);
         art.ctx.lineTo(x + (art.cellSize * 2), y + art.cellSize);
     };
 
     art.getStyle = function() {
-        return "rgb(" + Math.floor(Math.random() * 255) + ", "
-                + Math.floor(Math.random() * 255) + ", "
-                + Math.floor(Math.random() * 255) + ")";
+
+        var r, g, b, colourType,
+            colourSelection = Math.floor(Math.random() * 14);
+
+        if (art.colourType && colourSelection %2 === 0) {
+            colourType = art.colourType;
+            art.same++;
+        } else if (colourSelection >= 2 && colourSelection <= 5) {
+            colourType = art.colours.primary;
+            art.pri++;
+        } else if (colourSelection >= 6 && colourSelection <= 9) {
+            colourType = art.colours.secondary;
+            art.sec++;
+        } else {
+            colourType = art.colours.tertiary;
+            art.ter++;
+        }
+        
+        art.colourType = colourType;
+
+        r = art.getColour(colourType[0]);
+        g = art.getColour(colourType[1]);
+        b = art.getColour(colourType[2]);
+
+        return "rgb(" + r + ", "
+            + g + ", "
+            + b + ")";
+    };
+
+    art.getColour = function(startingShade) {
+        return startingShade + (Math.floor(Math.random() * 40));
     };
 
     return art;
