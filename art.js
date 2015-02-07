@@ -1,4 +1,5 @@
-window.art = (function($) {
+window.Art = window.Art || {};
+window.Art.art = (function($) {
     var art = {};
 
     art.init = function() {
@@ -41,80 +42,56 @@ window.art = (function($) {
     };
 
     art.drawTriangles = function() {
-        var i = 0,
+        this.triangles = [];
+        var tri,
+            i = 0,
             j = 0;
         for (var x = (this.cellSize * -2); x < this.width; x += (this.cellSize * 2)) {
+            j = 0;
+            this.triangles[i] = [];
             for (var y = 0; y < this.height + (this.cellSize * 2); y += this.cellSize) {
-
-                this.ctx.fillStyle = this.getStyle();
-
+                
                 if (i % 2 === 0) {
                     if (j % 2 === 0) {
-                        this.drawTriL1(x, y);
+                        this.triangles[i][j] = new window.Art.LeftTri1(
+                            this.getStyle(),
+                            {x: x, y: y},
+                            this.cellSize,
+                            this.ctx
+                        );
+                        this.triangles[i][j].render();
                     } else {
-                        this.drawTriL2(x, y);
+                        this.triangles[i][j] = new window.Art.LeftTri2(
+                            this.getStyle(),
+                            {x: x, y: y},
+                            this.cellSize,
+                            this.ctx
+                        );
+                        this.triangles[i][j].render();
                     }
                 } else {
                     if (j % 2 === 0) {
-                        this.drawTriR1(x, y);
+                        this.triangles[i][j] = new window.Art.RightTri1(
+                            this.getStyle(),
+                            {x: x, y: y},
+                            this.cellSize,
+                            this.ctx
+                        );
+                        this.triangles[i][j].render();
                     } else {
-                        this.drawTriR2(x, y);
+                        this.triangles[i][j] = new window.Art.RightTri2(
+                            this.getStyle(),
+                            {x: x, y: y},
+                            this.cellSize,
+                            this.ctx
+                        );
+                        this.triangles[i][j].render();
                     }
                 }
                 j++;
             }
             i++;
         }
-    };
-
-    art.drawTriangle = function(drawFn, x, y) {
-        this.ctx.beginPath();
-        drawFn.call(this, x, y);
-        this.ctx.fill();
-    };
-    
-    art.drawTriL1 = function(x, y) {
-        this.drawTriangle(this.triangleLeft1, x, y);
-    };
-    
-    art.drawTriL2 = function(x, y) {
-        this.drawTriangle(this.triangleLeft2, x, y);
-    };
-    
-    art.drawTriR1 = function(x, y) {
-        this.drawTriangle(this.triangleRight1, x, y);
-    };
-    
-    art.drawTriR2 = function(x, y) {
-        this.drawTriangle(this.triangleRight2, x, y);
-    };
-
-    // <|
-    art.triangleLeft1 = function(x, y) {
-        this.ctx.moveTo(x, y);
-        this.ctx.lineTo(x + (this.cellSize * 2), y - this.cellSize);
-        this.ctx.lineTo(x + (this.cellSize * 2), y + this.cellSize);
-    };
-
-    //   <|
-    art.triangleLeft2 = function(x, y) {
-        this.ctx.moveTo(x + (this.cellSize * 2), y);
-        this.ctx.lineTo(x + (this.cellSize * 4), y - this.cellSize);
-        this.ctx.lineTo(x + (this.cellSize * 4), y + this.cellSize);
-    };
-
-    // |>
-    art.triangleRight1 = function(x, y) {
-        this.ctx.moveTo(x, y - this.cellSize);
-        this.ctx.lineTo(x + (this.cellSize * 2), y);
-        this.ctx.lineTo(x, y + this.cellSize);
-    };
-
-    //   |>
-    art.triangleRight2 = function(x, y) {
-        this.ctx.moveTo(x + (this.cellSize * 2), y - this.cellSize);
-        this.ctx.lineTo(x + (this.cellSize * 4), y);
-        this.ctx.lineTo(x + (this.cellSize * 2), y + this.cellSize);
     };
 
     art.getStyle = function() {
@@ -142,9 +119,12 @@ window.art = (function($) {
         g = this.getColour(colourType[1]);
         b = this.getColour(colourType[2]);
 
-        return "rgb(" + r + ", "
-            + g + ", "
-            + b + ")";
+        return {
+            r: r,
+            g: g,
+            b: b
+        };
+
     };
 
     art.getColour = function(startingShade) {
@@ -156,5 +136,5 @@ window.art = (function($) {
 }(jQuery));
 
 $(function() {
-    window.art.init();
+    window.Art.art.init();
 });
