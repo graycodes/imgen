@@ -2,40 +2,40 @@ window.art = (function($) {
     var art = {};
 
     art.init = function() {
-        art.cellSize = 20;
-        art.width = 800;
-        art.height = 600;
-        art.colours = {
+        this.cellSize = 20;
+        this.width = 800;
+        this.height = 600;
+        this.colours = {
             primary:   [200, 60, 0],
             secondary: [60, 140, 170],
             tertiary:  [220, 170, 30]
         };
-        art.same = 0;
-        art.pri = 0;
-        art.sec = 0;
-        art.ter = 0;
+        this.same = 0;
+        this.pri = 0;
+        this.sec = 0;
+        this.ter = 0;
 
-        art.createCanvas();
-        art.drawGridDots();
-        art.drawTriangles();
-        console.log (art.same, art.pri, art.sec, art.ter);
+        this.createCanvas();
+        this.drawGridDots();
+        this.drawTriangles();
+        console.log (this.same, this.pri, this.sec, this.ter);
     };
 
     art.createCanvas = function() {
-        art.c = $('<canvas id="cnv" width="' + art.width + '" height="' + art.height + 
+        this.c = $('<canvas id="cnv" width="' + this.width + '" height="' + this.height + 
                   '" />')[0];
-        $('body').append(art.c);
+        $('body').append(this.c);
 
-        art.ctx = art.c.getContext('2d');
-        art.ctx.fillStyle="#000000";
+        this.ctx = this.c.getContext('2d');
+        this.ctx.fillStyle="#000000";
     };
 
     art.drawGridDots = function() {
         var x, y;
 
-        for (x = art.width; x >= 0; x -= art.cellSize) {
-            for (y = art.height; y >= 0; y -= art.cellSize) {
-                art.ctx.fillRect(x, y, 1, 1);
+        for (x = this.width; x >= 0; x -= this.cellSize) {
+            for (y = this.height; y >= 0; y -= this.cellSize) {
+                this.ctx.fillRect(x, y, 1, 1);
             }
         }
     };
@@ -43,22 +43,22 @@ window.art = (function($) {
     art.drawTriangles = function() {
         var i = 0,
             j = 0;
-        for (var x = (art.cellSize * -2); x < art.width; x += (art.cellSize * 2)) {
-            for (var y = 0; y < art.height + (art.cellSize * 2); y += art.cellSize) {
+        for (var x = (this.cellSize * -2); x < this.width; x += (this.cellSize * 2)) {
+            for (var y = 0; y < this.height + (this.cellSize * 2); y += this.cellSize) {
 
-                art.ctx.fillStyle = art.getStyle();
+                this.ctx.fillStyle = this.getStyle();
 
                 if (i % 2 === 0) {
                     if (j % 2 === 0) {
-                        art.drawTriL1(x, y);
+                        this.drawTriL1(x, y);
                     } else {
-                        art.drawTriL2(x, y);
+                        this.drawTriL2(x, y);
                     }
                 } else {
                     if (j % 2 === 0) {
-                        art.drawTriR1(x, y);
+                        this.drawTriR1(x, y);
                     } else {
-                        art.drawTriR2(x, y);
+                        this.drawTriR2(x, y);
                     }
                 }
                 j++;
@@ -68,53 +68,53 @@ window.art = (function($) {
     };
 
     art.drawTriangle = function(drawFn, x, y) {
-        art.ctx.beginPath();
-        drawFn(x,y);
-        art.ctx.fill();
+        this.ctx.beginPath();
+        drawFn.call(this, x, y);
+        this.ctx.fill();
     };
     
     art.drawTriL1 = function(x, y) {
-        art.drawTriangle(art.triangleLeft1, x, y);
+        this.drawTriangle(this.triangleLeft1, x, y);
     };
     
     art.drawTriL2 = function(x, y) {
-        art.drawTriangle(art.triangleLeft2, x, y);
+        this.drawTriangle(this.triangleLeft2, x, y);
     };
     
     art.drawTriR1 = function(x, y) {
-        art.drawTriangle(art.triangleRight1, x, y);
+        this.drawTriangle(this.triangleRight1, x, y);
     };
     
     art.drawTriR2 = function(x, y) {
-        art.drawTriangle(art.triangleRight2, x, y);
+        this.drawTriangle(this.triangleRight2, x, y);
     };
 
     // <|
     art.triangleLeft1 = function(x, y) {
-        art.ctx.moveTo(x, y);
-        art.ctx.lineTo(x + (art.cellSize * 2), y - art.cellSize);
-        art.ctx.lineTo(x + (art.cellSize * 2), y + art.cellSize);
+        this.ctx.moveTo(x, y);
+        this.ctx.lineTo(x + (this.cellSize * 2), y - this.cellSize);
+        this.ctx.lineTo(x + (this.cellSize * 2), y + this.cellSize);
     };
 
     //   <|
     art.triangleLeft2 = function(x, y) {
-        art.ctx.moveTo(x + (art.cellSize * 2), y);
-        art.ctx.lineTo(x + (art.cellSize * 4), y - art.cellSize);
-        art.ctx.lineTo(x + (art.cellSize * 4), y + art.cellSize);
+        this.ctx.moveTo(x + (this.cellSize * 2), y);
+        this.ctx.lineTo(x + (this.cellSize * 4), y - this.cellSize);
+        this.ctx.lineTo(x + (this.cellSize * 4), y + this.cellSize);
     };
 
     // |>
     art.triangleRight1 = function(x, y) {
-        art.ctx.moveTo(x, y - art.cellSize);
-        art.ctx.lineTo(x + (art.cellSize * 2), y);
-        art.ctx.lineTo(x, y + art.cellSize);
+        this.ctx.moveTo(x, y - this.cellSize);
+        this.ctx.lineTo(x + (this.cellSize * 2), y);
+        this.ctx.lineTo(x, y + this.cellSize);
     };
 
     //   |>
     art.triangleRight2 = function(x, y) {
-        art.ctx.moveTo(x + (art.cellSize * 2), y - art.cellSize);
-        art.ctx.lineTo(x + (art.cellSize * 4), y);
-        art.ctx.lineTo(x + (art.cellSize * 2), y + art.cellSize);
+        this.ctx.moveTo(x + (this.cellSize * 2), y - this.cellSize);
+        this.ctx.lineTo(x + (this.cellSize * 4), y);
+        this.ctx.lineTo(x + (this.cellSize * 2), y + this.cellSize);
     };
 
     art.getStyle = function() {
@@ -122,25 +122,25 @@ window.art = (function($) {
         var r, g, b, colourType,
             colourSelection = Math.floor(Math.random() * 14);
 
-        if (art.colourType && colourSelection %2 === 0) {
-            colourType = art.colourType;
-            art.same++;
+        if (this.colourType && colourSelection %2 === 0) {
+            colourType = this.colourType;
+            this.same++;
         } else if (colourSelection >= 2 && colourSelection <= 5) {
-            colourType = art.colours.primary;
-            art.pri++;
+            colourType = this.colours.primary;
+            this.pri++;
         } else if (colourSelection >= 6 && colourSelection <= 9) {
-            colourType = art.colours.secondary;
-            art.sec++;
+            colourType = this.colours.secondary;
+            this.sec++;
         } else {
-            colourType = art.colours.tertiary;
-            art.ter++;
+            colourType = this.colours.tertiary;
+            this.ter++;
         }
         
-        art.colourType = colourType;
+        this.colourType = colourType;
 
-        r = art.getColour(colourType[0]);
-        g = art.getColour(colourType[1]);
-        b = art.getColour(colourType[2]);
+        r = this.getColour(colourType[0]);
+        g = this.getColour(colourType[1]);
+        b = this.getColour(colourType[2]);
 
         return "rgb(" + r + ", "
             + g + ", "
