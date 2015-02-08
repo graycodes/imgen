@@ -1,5 +1,9 @@
-<button onclick="window.Art.art.makeShape()">Make Triangle</button>
-<button onclick="makeShape()">Make Shape</button>
+<p>
+    <button onclick="window.Art.art.makeShapeStep()">Make Triangle</button>
+    <button onclick="window.Art.art.makeShape()">Make Shape</button>
+<!--    <label for="shapeLengthMax">Max shape length</label><input type="text" id="shapeLengthMax" value="100" />
+    <label for="cellSize">Triangle size</label><input type="text" id="cellSize" value="20" />-->
+</p>
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
 <script src="triangle.js"></script>
@@ -9,14 +13,3 @@
 <script src="rightTriangle2.js"></script>
 <script src="art.js"></script>
 
-<script>
-    var makeShape = function() {
-        if (window.interval) {
-            clearInterval(window.interval)
-        }
-        window.Art.art.lastTri = null;
-        window.Art.art.colourName = window.Art.art.getColour();
-        window.Art.art.colour = window.Art.art.colours[window.Art.art.colourName];
-        window.interval = setInterval(function(){window.Art.art.makeShape()}, 50); 
-    }
-</script>

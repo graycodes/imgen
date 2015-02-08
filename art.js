@@ -3,7 +3,8 @@ window.Art.art = (function($) {
     var art = {};
 
     art.init = function() {
-        this.cellSize = 20;
+        this.cellSize = 15;
+        this.shapeLengthMax = 20;
         this.width = 800;
         this.height = 600;
         this.colours = {
@@ -18,10 +19,13 @@ window.Art.art = (function($) {
         this.sec = 0;
         this.ter = 0;
 
+        this.setInitialState();
+    };
+
+    art.setInitialState = function() {
         this.createCanvas();
         this.drawGridDots();
         this.drawTriangles();
-        console.log (this.same, this.pri, this.sec, this.ter);
     };
 
     art.createCanvas = function() {
@@ -90,29 +94,54 @@ window.Art.art = (function($) {
             }
             i++;
         }
+        this.trianglesLength = (i * j);
     };
 
-    art.makeShape = function() {console.log('ms');
-        var start, i, j, oldI, oldJ, tri, dir, nextTri;
+    art.makeShape = function() {
 
-        start = this.getStartPoint();
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        this.lastTri = null;
+        this.colourName = this.getColour();
+        this.colour = this.colours[this.colourName];
+        var self = this;
+        this.shapeLength = 0;
+        this.interval = setInterval(function(){self.makeShapeStep();}, 0); 
 
-        i = start.x;
-        j = start.y;
+    };
+
+    art.shapeFinished = function() {
+        clearInterval(this.interval);
+        if (this.trianglesLength) {
+            this.makeShape();
+        }
+    };
+
+    art.makeShapeStep = function() {
+        var start, i, j, tri, dir, nextTri;
 
         if (this.lastTri) {
             nextTri = this.getNextDir(this.lastTri);
-            if (!nextTri) return;
+            if (!nextTri || this.shapeLength > this.shapeLengthMax) {
+                return this.shapeFinished();
+            }
             dir = nextTri.position;
             i = dir.x;
             j = dir.y;
+        } else {
+            start = this.getStartPoint();
+
+            i = start.x;
+            j = start.y;
         }
         tri = this.getTri(i, j);
 
         if (!tri) return;
+        this.trianglesLength--;
         tri.render(this.getShades(this.colour));
         this.lastTri = tri;
-
+        this.shapeLength++;
     };
 
     art.getStartPoint = function() {

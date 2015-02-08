@@ -20,7 +20,7 @@ window.Art.Tri = (function() {
     var tri = Tri.prototype;
 
     tri.render = function(colour) {
-        var x = (this.position.x * (this.size * 2)) - this.size,
+        var x = (this.position.x * (this.size * 2)) - (this.size * 2),
             y = (this.position.y * this.size);
         this.ctx.fillStyle = this.getColour(colour);
         this.ctx.beginPath();
