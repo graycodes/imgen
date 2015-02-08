@@ -19,28 +19,21 @@ window.Art.Tri = (function() {
     };
     var tri = Tri.prototype;
 
-    tri.render = function() {
-        var x = (this.position.x * (this.size * 2)),
+    tri.render = function(colour) {
+        var x = (this.position.x * (this.size * 2)) - this.size,
             y = (this.position.y * this.size);
-        this.ctx.fillStyle = this.getColour();
+        this.ctx.fillStyle = this.getColour(colour);
         this.ctx.beginPath();
         this.draw(x, y);
         this.ctx.fill();
         this.rendered = true;
     };
 
-    tri.getColour = function() {
+    tri.getColour = function(colour) {
         return 'rgb(' + 
-            this.colour.r + ', ' + 
-            this.colour.g + ', '  + 
-            this.colour.b + ')';
-    };
-
-    tri.below = function() {
-        return {
-            x: this.position.x,
-            y: this.position.y + 1
-        };
+            colour.r + ', ' + 
+            colour.g + ', '  + 
+            colour.b + ')';
     };
 
     return Tri;

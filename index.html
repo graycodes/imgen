@@ -1,5 +1,5 @@
 <button onclick="window.Art.art.makeShape()">Make Triangle</button>
-<button onclick="setInterval(function(){window.Art.art.makeShape()}, 50)">Make Shape</button>
+<button onclick="makeShape()">Make Shape</button>
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
 <script src="triangle.js"></script>
@@ -8,3 +8,15 @@
 <script src="rightTriangle1.js"></script>
 <script src="rightTriangle2.js"></script>
 <script src="art.js"></script>
+
+<script>
+    var makeShape = function() {
+        if (window.interval) {
+            clearInterval(window.interval)
+        }
+        window.Art.art.lastTri = null;
+        window.Art.art.colourName = window.Art.art.getColour();
+        window.Art.art.colour = window.Art.art.colours[window.Art.art.colourName];
+        window.interval = setInterval(function(){window.Art.art.makeShape()}, 50); 
+    }
+</script>

@@ -11,6 +11,8 @@ window.Art.art = (function($) {
             secondary: [60, 140, 170],
             tertiary:  [220, 170, 30]
         };
+        this.colourName = 'primary';
+        this.colour = this.colours[this.colourName];
         this.same = 0;
         this.pri = 0;
         this.sec = 0;
@@ -90,10 +92,13 @@ window.Art.art = (function($) {
         }
     };
 
-    art.makeShape = function() {
-        var i = ~~(Math.random() * this.triangles.length),
-            j = ~~(Math.random() * this.triangles[i].length),
-            oldI, oldJ, tri, dir, nextTri;
+    art.makeShape = function() {console.log('ms');
+        var start, i, j, oldI, oldJ, tri, dir, nextTri;
+
+        start = this.getStartPoint();
+
+        i = start.x;
+        j = start.y;
 
         if (this.lastTri) {
             nextTri = this.getNextDir(this.lastTri);
@@ -105,9 +110,19 @@ window.Art.art = (function($) {
         tri = this.getTri(i, j);
 
         if (!tri) return;
-        tri.render();
+        tri.render(this.getShades(this.colour));
         this.lastTri = tri;
 
+    };
+
+    art.getStartPoint = function() {
+        var i, j;
+        i = ~~(Math.random() * this.triangles.length);
+        j = ~~(Math.random() * this.triangles[i].length);
+        if (!this.getTri(i, j) || this.getTri(i, j).rendered) {
+            return this.getStartPoint();
+        }
+        return {x: i, y: j};
     };
 
     art.getNextDir = function(tri) {
@@ -136,6 +151,11 @@ window.Art.art = (function($) {
         return this.triangles[x][y];
     };
 
+    art.getColour = function() {
+        console.log(this.colourName);
+        return (this.colourName === 'primary' ? 'secondary' : (this.colourName === 'secondary' ? 'tertiary' : 'primary'));
+    };
+
     art.getStyle = function() {
 
         var r, g, b, colourType,
@@ -157,9 +177,9 @@ window.Art.art = (function($) {
         
         this.colourType = colourType;
 
-        r = this.getColour(colourType[0]);
-        g = this.getColour(colourType[1]);
-        b = this.getColour(colourType[2]);
+        r = this.getShade(colourType[0]);
+        g = this.getShade(colourType[1]);
+        b = this.getShade(colourType[2]);
 
         return {
             r: r,
@@ -169,7 +189,15 @@ window.Art.art = (function($) {
 
     };
 
-    art.getColour = function(startingShade) {
+    art.getShades = function(colour) {
+        return {
+            r: this.getShade(colour[0]),
+            g: this.getShade(colour[1]),
+            b: this.getShade(colour[2])
+        };
+    };
+
+    art.getShade = function(startingShade) {
         return startingShade + (Math.floor(Math.random() * 40));
     };
 
