@@ -55,43 +55,85 @@ window.Art.art = (function($) {
                     if (j % 2 === 0) {
                         this.triangles[i][j] = new window.Art.LeftTri1(
                             this.getStyle(),
-                            {x: x, y: y},
+                            {x: i, y: j},
                             this.cellSize,
                             this.ctx
                         );
-                        this.triangles[i][j].render();
                     } else {
                         this.triangles[i][j] = new window.Art.LeftTri2(
                             this.getStyle(),
-                            {x: x, y: y},
+                            {x: i, y: j},
                             this.cellSize,
                             this.ctx
                         );
-                        this.triangles[i][j].render();
                     }
                 } else {
                     if (j % 2 === 0) {
                         this.triangles[i][j] = new window.Art.RightTri1(
                             this.getStyle(),
-                            {x: x, y: y},
+                            {x: i, y: j},
                             this.cellSize,
                             this.ctx
                         );
-                        this.triangles[i][j].render();
                     } else {
                         this.triangles[i][j] = new window.Art.RightTri2(
                             this.getStyle(),
-                            {x: x, y: y},
+                            {x: i, y: j},
                             this.cellSize,
                             this.ctx
                         );
-                        this.triangles[i][j].render();
                     }
                 }
                 j++;
             }
             i++;
         }
+    };
+
+    art.makeShape = function() {
+        var i = ~~(Math.random() * this.triangles.length),
+            j = ~~(Math.random() * this.triangles[i].length),
+            oldI, oldJ, tri, dir, nextTri;
+
+        if (this.lastTri) {
+            nextTri = this.getNextDir(this.lastTri);
+            if (!nextTri) return;
+            dir = nextTri.position;
+            i = dir.x;
+            j = dir.y;
+        }
+        tri = this.getTri(i, j);
+
+        if (!tri) return;
+        tri.render();
+        this.lastTri = tri;
+
+    };
+
+    art.getNextDir = function(tri) {
+        var above = tri.above(),
+            below = tri.below(),
+            aside = tri.aside(),
+            aboveTri = this.getTri(above.x, above.y),
+            belowTri = this.getTri(below.x, below.y),
+            asideTri = this.getTri(aside.x, aside.y),
+            dirs = [],
+            rand;
+
+        if (aboveTri && !aboveTri.rendered) dirs.push(aboveTri);
+        if (belowTri && !belowTri.rendered) dirs.push(belowTri);
+        if (asideTri && !asideTri.rendered) dirs.push(asideTri);
+
+        rand = ~~(Math.random() * dirs.length);
+        return dirs[rand];
+
+    };
+
+    art.getTri = function(x, y) {
+        if (!this.triangles[x] || !this.triangles[x][y]) {
+            return;
+        }
+        return this.triangles[x][y];
     };
 
     art.getStyle = function() {
