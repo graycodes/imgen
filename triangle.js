@@ -2,16 +2,14 @@ window.Art = window.Art || {};
 window.Art.Tri = (function() {
 
     /**
-     * @param {number[]} colour The colour of the triangle.
      * @param {object} position The position of the triangle.
      * @param {number} position.x The x pos of the triangle.
      * @param {number} position.y The y pos of the triangle.
      * @param {number} size The size of the triangle.
      * @param {object} ctx The context of the canvas, for drawing.
      */
-    function Tri(colour, position, size, ctx) {
-        if (!colour || !position || !ctx) throw "Missing param to new Tri";
-        this.colour = colour;
+    function Tri(position, size, ctx) {
+        if (!position || !ctx) throw "Missing param to new Tri";
         this.position = position;
         this.size = size;
         this.ctx = ctx;

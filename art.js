@@ -4,16 +4,17 @@ window.Art.art = (function($) {
 
     art.init = function() {
         this.cellSize = 15;
-        this.shapeLengthMax = 20;
+        this.shapeLengthMax = 10;
         this.width = 800;
         this.height = 600;
-        this.colours = {
-            primary:   [200, 60, 0],
-            secondary: [60, 140, 170],
-            tertiary:  [220, 170, 30]
-        };
-        this.colourName = 'primary';
-        this.colour = this.colours[this.colourName];
+        this.colours = [
+            [200, 60, 0],
+            [60, 140, 170],
+            [220, 170, 30]/*,
+            [6, 128, 57]*/
+        ];
+        this.colourIndex = 0;
+        this.colour = this.colours[this.colourIndex];
         this.same = 0;
         this.pri = 0;
         this.sec = 0;
@@ -60,7 +61,7 @@ window.Art.art = (function($) {
             this.triangles[i] = [];
             for (y = 0; y < this.height + (this.cellSize * 2); y += this.cellSize) {
                 Type = this.getTriangleType(i, j);
-                this.triangles[i][j] = new Type(this.getStyle(), {x: i, y: j}, 
+                this.triangles[i][j] = new Type({x: i, y: j}, 
                                                 this.cellSize, this.ctx);
                 j++;
             }
@@ -93,11 +94,10 @@ window.Art.art = (function($) {
             clearInterval(this.interval);
         }
         this.lastTri = null;
-        this.colourName = this.getColour();
-        this.colour = this.colours[this.colourName];
+        this.colour = this.getColour();
         var self = this;
         this.shapeLength = 0;
-        this.interval = setInterval(function(){self.makeShapeStep();}, 0); 
+        this.interval = setInterval(function(){self.makeShapeStep.call(window.Art.art);}, 0); 
 
     };
 
@@ -126,20 +126,33 @@ window.Art.art = (function($) {
             j = start.y;
         }
         tri = this.getTri(i, j);
-
-        if (!tri) return;
+        
+        if (!tri) {
+            return;
+        }
         this.trianglesLength--;
         tri.render(this.getShades(this.colour));
         this.lastTri = tri;
         this.shapeLength++;
     };
 
-    art.getStartPoint = function() {
+    art.canvasCovered = function() {
+        var x = this.triangles.length,
+            y = this.triangles[0].length;
+        for (x; x >= 0; x--) {
+            for (y = this.triangles[0].length; y >= 0; y--) {
+                this.triangles[x][y].rendered = false;
+            }
+        }
+    };
+
+
+    art.getStartPoint = function() {//TODO: Make this not shit.
         var i, j;
         i = ~~(Math.random() * this.triangles.length);
         j = ~~(Math.random() * this.triangles[i].length);
         if (!this.getTri(i, j) || this.getTri(i, j).rendered) {
-            return this.getStartPoint();
+            return this.getStartPoint();//FML, this causes stack overflows.
         }
         return {x: i, y: j};
     };
@@ -171,41 +184,11 @@ window.Art.art = (function($) {
     };
 
     art.getColour = function() {
-        console.log(this.colourName);
-        return (this.colourName === 'primary' ? 'secondary' : (this.colourName === 'secondary' ? 'tertiary' : 'primary'));
-    };
-
-    art.getStyle = function() {
-
-        var r, g, b, colourType,
-            colourSelection = Math.floor(Math.random() * 14);
-
-        if (this.colourType && colourSelection %2 === 0) {
-            colourType = this.colourType;
-            this.same++;
-        } else if (colourSelection >= 2 && colourSelection <= 5) {
-            colourType = this.colours.primary;
-            this.pri++;
-        } else if (colourSelection >= 6 && colourSelection <= 9) {
-            colourType = this.colours.secondary;
-            this.sec++;
-        } else {
-            colourType = this.colours.tertiary;
-            this.ter++;
-        }
-        
-        this.colourType = colourType;
-
-        r = this.getShade(colourType[0]);
-        g = this.getShade(colourType[1]);
-        b = this.getShade(colourType[2]);
-
-        return {
-            r: r,
-            g: g,
-            b: b
-        };
-
+        var newColour;
+        this.colourIndex = (this.colourIndex === this.colours.length ? 0 : this.colourIndex);
+        newColour = this.colours[this.colourIndex];
+        this.colourIndex++;
+        return newColour;
     };
 
     art.getShades = function(colour) {
