@@ -48,53 +48,43 @@ window.Art.art = (function($) {
     };
 
     art.drawTriangles = function() {
+        var i = 0,
+            j = 0,
+            x = (this.cellSize * -2),
+            y = 0,
+            tri, Type;
         this.triangles = [];
-        var tri,
-            i = 0,
-            j = 0;
-        for (var x = (this.cellSize * -2); x < this.width; x += (this.cellSize * 2)) {
+        
+        for (; x < this.width; x += (this.cellSize * 2)) {
             j = 0;
             this.triangles[i] = [];
-            for (var y = 0; y < this.height + (this.cellSize * 2); y += this.cellSize) {
-                
-                if (i % 2 === 0) {
-                    if (j % 2 === 0) {
-                        this.triangles[i][j] = new window.Art.LeftTri1(
-                            this.getStyle(),
-                            {x: i, y: j},
-                            this.cellSize,
-                            this.ctx
-                        );
-                    } else {
-                        this.triangles[i][j] = new window.Art.LeftTri2(
-                            this.getStyle(),
-                            {x: i, y: j},
-                            this.cellSize,
-                            this.ctx
-                        );
-                    }
-                } else {
-                    if (j % 2 === 0) {
-                        this.triangles[i][j] = new window.Art.RightTri1(
-                            this.getStyle(),
-                            {x: i, y: j},
-                            this.cellSize,
-                            this.ctx
-                        );
-                    } else {
-                        this.triangles[i][j] = new window.Art.RightTri2(
-                            this.getStyle(),
-                            {x: i, y: j},
-                            this.cellSize,
-                            this.ctx
-                        );
-                    }
-                }
+            for (y = 0; y < this.height + (this.cellSize * 2); y += this.cellSize) {
+                Type = this.getTriangleType(i, j);
+                this.triangles[i][j] = new Type(this.getStyle(), {x: i, y: j}, 
+                                                this.cellSize, this.ctx);
                 j++;
             }
             i++;
         }
         this.trianglesLength = (i * j);
+    };
+
+    art.getTriangleType = function(i, j) {
+        var type;
+        if (i % 2 === 0) {
+            if (j % 2 === 0) {
+                type = window.Art.LeftTri1;
+            } else {
+                type = window.Art.LeftTri2;
+            }
+        } else {
+            if (j % 2 === 0) {
+                type = window.Art.RightTri1;
+            } else {
+                type = window.Art.RightTri2;
+            }
+        }
+        return type;
     };
 
     art.makeShape = function() {
